@@ -16,7 +16,7 @@
 
 package org.microg.gms.ui;
 
-//import android.content.Context;
+import android.content.Context;
 import android.content.Intent;
 //import android.content.pm.CrossProfileApps;
 //import android.content.pm.PackageManager;
@@ -63,7 +63,7 @@ public class SelfCheckFragment extends AbstractSelfCheckFragment {
 //        if (Objects.equals(context.getPackageName(), Constants.GMS_PACKAGE_NAME)) {
 //            checks.add(new RomSpoofSignatureChecks());
 ////        }
-////        checks.add(new InstalledPackagesChecks());
+              checks.add(new InstalledPackagesChecks());
 //        if (SDK_INT >= 23) {
 //            List<String> permissions = new ArrayList<>();
 //            permissions.add(ACCESS_COARSE_LOCATION);
@@ -118,7 +118,7 @@ public class SelfCheckFragment extends AbstractSelfCheckFragment {
 //                   }
 //                }
 //            });
-..        }
+//       }
         if (SDK_INT >= 23) {
             checks.add(new SystemChecks());
         }
