@@ -16,27 +16,18 @@ def hasModule = (String name, boolean enabledByDefault) -> {
   return localProperties.getProperty("modules." + name, enabledByDefault.toString()).toBoolean()
 }
 
-include ':safe-parcel-processor'
-
 include ':play-services-base'
 include ':play-services-basement'
-//include ':play-services-cast'
-//include ':play-services-cast-framework'
 include ':play-services-tasks'
 
-include ':play-services-api'
 include ':play-services'
 
 // core only
-
-include ':play-services-core-proto'
 
 sublude ':play-services-basement:ktx'
 sublude ':play-services-tasks:ktx'
 
 sublude ':play-services-base:core'
-//sublude ':play-services-cast:core'
-//sublude ':play-services-cast-framework:core'
 include ':play-services-conscrypt-provider-core'
 
 include ':play-services-core:microg-ui-tools' // Legacy
