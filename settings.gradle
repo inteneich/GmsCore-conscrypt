@@ -22,8 +22,8 @@ include ':play-services-auth'
 include ':play-services-auth-base'
 include ':play-services-base'
 include ':play-services-basement'
-include ':play-services-cast'
-include ':play-services-cast-framework'
+//include ':play-services-cast'
+//include ':play-services-cast-framework'
 include ':play-services-tasks'
 
 include ':play-services-api'
@@ -37,8 +37,8 @@ sublude ':play-services-basement:ktx'
 sublude ':play-services-tasks:ktx'
 
 sublude ':play-services-base:core'
-sublude ':play-services-cast:core'
-sublude ':play-services-cast-framework:core'
+//sublude ':play-services-cast:core'
+//sublude ':play-services-cast-framework:core'
 include ':play-services-conscrypt-provider-core'
 
 include ':play-services-core:microg-ui-tools' // Legacy
