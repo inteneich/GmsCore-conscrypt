@@ -7,18 +7,97 @@ package org.microg.gms.settings
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.pm.CrossProfileApps
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Binder
+import android.os.Build.VERSION.SDK_INT
+import android.os.Bundle
+import android.os.UserManager
+import android.util.Log
+import androidx.core.net.toUri
+import org.microg.gms.crossprofile.CrossProfileRequestActivity
+import org.microg.gms.ui.TAG
 
 object SettingsContract {
-    fun getAuthority(context: Context) = "${context.packageName}.microg.settings"
-    fun getAuthorityUri(context: Context): Uri = Uri.parse("content://${getAuthority(context)}")
+    const val META_DATA_KEY_SOURCE_PACKAGE = "org.microg.gms.settings:source-package"
+
+    /**
+     * Stores keys that are useful only for connecting to the SettingsProvider from
+     * main profile in a managed / work profile
+     */
+    const val CROSS_PROFILE_SHARED_PREFERENCES_NAME = "crossProfile"
+    const val CROSS_PROFILE_PERMISSION = "uri"
+
+    fun getAuthority(context: Context): String {
+        val metaData = runCatching { context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA).metaData }.getOrNull() ?: Bundle.EMPTY
+        val sourcePackage = metaData.getString(META_DATA_KEY_SOURCE_PACKAGE, context.packageName)
+        return "${sourcePackage}.microg.settings"
+    }
+
+    /**
+     * URI for preferences local to this profile
+     */
+    fun getAuthorityUri(context: Context) = "content://${getAuthority(context)}".toUri()
+
+    /* Cross-profile interactivity, granting access to same preferences across all profiles of a user:
+     * URI points to our `SettingsProvider` on normal profile and is supposed to point to
+     * _primary_ profile's `SettingsProvider` work / managed profile. If this is not yet established,
+     * we need to start the `CrossProfileRequestActivity`, which asks `CrossProfileSendActivity` to
+     * send it a URI that entitles it to access the primary profile's settings. (This would normally
+     * happen while creating the profile from `UserInitReceiver`.)
+     */
+    fun getCrossProfileSharedAuthorityUri(context: Context): Uri {
+
+        if (SDK_INT < 30) {
+            Log.v(TAG, "cross-profile interactivity not possible on this Android version")
+            return "content://${getAuthority(context)}".toUri()
+        }
+
+        val userManager = context.getSystemService(UserManager::class.java)
+        val workProfile = userManager.isManagedProfile
+
+        if (!workProfile) {
+            return "content://${getAuthority(context)}".toUri()
+        }
+
+        /* Check special shared preferences file if it contains a URI that permits us to access
+         * main profile's settings content provider
+         */
+        val preferences = context.getSharedPreferences(CROSS_PROFILE_SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+        if (preferences.contains(CROSS_PROFILE_PERMISSION)) {
+            Log.v(TAG, "using work profile stored URI")
+            return preferences.getString(CROSS_PROFILE_PERMISSION, null)!!.toUri()
+        }
+
+        val crossProfileApps = context.getSystemService(CrossProfileApps::class.java)
+        val targetProfiles = crossProfileApps.targetUserProfiles
+
+        if (!crossProfileApps.canInteractAcrossProfiles() || targetProfiles.isEmpty()) {
+            Log.w(TAG, "prerequisites for cross-profile interactivity not met: " +
+                    "can interact = ${crossProfileApps.canInteractAcrossProfiles()}, " +
+                    "#targetProfiles = ${targetProfiles.size}")
+            return "content://${getAuthority(context)}".toUri()
+        } else {
+
+            Log.d(TAG, "Initiating activity to request storage URI from main profile")
+            context.startActivity(Intent(context, CrossProfileRequestActivity::class.java).apply {
+                addFlags(FLAG_ACTIVITY_NEW_TASK)
+            })
+
+            // while proper response is not yet available, work on local data :(
+            return "content://${getAuthority(context)}".toUri()
+        }
+    }
 
     object CheckIn {
-        private const val id = "check-in"
-        fun getContentUri(context: Context) = Uri.withAppendedPath(getAuthorityUri(context), id)
-        fun getContentType(context: Context) = "vnd.android.cursor.item/vnd.${getAuthority(context)}.$id"
+        const val ID = "check-in"
+        fun getContentUri(context: Context) = Uri.withAppendedPath(getAuthorityUri(context), ID)
+        fun getContentType(context: Context) = "vnd.android.cursor.item/vnd.${getAuthority(context)}.$ID"
 
         const val ENABLED = "checkin_enable_service"
         const val ANDROID_ID = "androidId"
@@ -42,9 +121,9 @@ object SettingsContract {
     }
 
     object Gcm {
-        private const val id = "gcm"
-        fun getContentUri(context: Context) = Uri.withAppendedPath(getAuthorityUri(context), id)
-        fun getContentType(context: Context) = "vnd.android.cursor.item/vnd.${getAuthority(context)}.$id"
+        const val ID = "gcm"
+        fun getContentUri(context: Context) = Uri.withAppendedPath(getAuthorityUri(context), ID)
+        fun getContentType(context: Context) = "vnd.android.cursor.item/vnd.${getAuthority(context)}.$ID"
 
         const val FULL_LOG = "gcm_full_log"
         const val LAST_PERSISTENT_ID = "gcm_last_persistent_id"
@@ -76,25 +155,31 @@ object SettingsContract {
     }
 
     object Auth {
-        private const val id = "auth"
-        fun getContentUri(context: Context) = Uri.withAppendedPath(getAuthorityUri(context), id)
-        fun getContentType(context: Context) = "vnd.android.cursor.item/vnd.${getAuthority(context)}.$id"
+        const val ID = "auth"
+        fun getContentUri(context: Context) = Uri.withAppendedPath(getAuthorityUri(context), ID)
+        fun getContentType(context: Context) = "vnd.android.cursor.item/vnd.${getAuthority(context)}.$ID"
 
         const val TRUST_GOOGLE = "auth_manager_trust_google"
         const val VISIBLE = "auth_manager_visible"
         const val INCLUDE_ANDROID_ID = "auth_include_android_id"
+        const val STRIP_DEVICE_NAME = "auth_strip_device_name"
+        const val TWO_STEP_VERIFICATION = "auth_two_step_verification"
+        const val FIND_DEVICES = "auth_allow_find_devices"
 
         val PROJECTION = arrayOf(
             TRUST_GOOGLE,
             VISIBLE,
             INCLUDE_ANDROID_ID,
+            STRIP_DEVICE_NAME,
+            TWO_STEP_VERIFICATION,
+            FIND_DEVICES
         )
     }
 
     object Profile {
-        private const val id = "profile"
-        fun getContentUri(context: Context) = Uri.withAppendedPath(getAuthorityUri(context), id)
-        fun getContentType(context: Context) = "vnd.android.cursor.item/vnd.${getAuthority(context)}.$id"
+        const val ID = "profile"
+        fun getContentUri(context: Context) = Uri.withAppendedPath(getAuthorityUri(context), ID)
+        fun getContentType(context: Context) = "vnd.android.cursor.item/vnd.${getAuthority(context)}.$ID"
 
         const val PROFILE = "device_profile"
         const val SERIAL = "device_profile_serial"
@@ -102,6 +187,60 @@ object SettingsContract {
         val PROJECTION = arrayOf(
             PROFILE,
             SERIAL
+        )
+    }
+
+    object Vending {
+        const val ID = "vending"
+        fun getContentUri(context: Context) = Uri.withAppendedPath(getAuthorityUri(context), ID)
+        fun getContentType(context: Context) = "vnd.android.cursor.item/vnd.${getAuthority(context)}.$ID"
+
+        const val LICENSING = "vending_licensing"
+        const val LICENSING_PURCHASE_FREE_APPS = "vending_licensing_purchase_free_apps"
+        const val SPLIT_INSTALL = "vending_split_install"
+        const val BILLING = "vending_billing"
+        const val ASSET_DELIVERY = "vending_asset_delivery"
+        const val ASSET_DEVICE_SYNC = "vending_device_sync"
+        const val APPS_INSTALL = "vending_apps_install"
+        const val APPS_INSTALLER_LIST = "vending_apps_installer_list"
+        const val PLAY_INTEGRITY_APP_LIST = "vending_play_integrity_apps"
+
+        val PROJECTION = arrayOf(
+            LICENSING,
+            LICENSING_PURCHASE_FREE_APPS,
+            SPLIT_INSTALL,
+            BILLING,
+            ASSET_DELIVERY,
+            ASSET_DEVICE_SYNC,
+            APPS_INSTALL,
+            APPS_INSTALLER_LIST,
+            PLAY_INTEGRITY_APP_LIST
+        )
+    }
+
+    object WorkProfile {
+        const val ID = "workprofile"
+        fun getContentUri(context: Context) = Uri.withAppendedPath(getCrossProfileSharedAuthorityUri(context), ID)
+        fun getContentType(context: Context) = "vnd.android.cursor.item/vnd.${getAuthority(context)}.$ID"
+
+        const val CREATE_WORK_ACCOUNT = "workprofile_allow_create_work_account"
+
+        val PROJECTION = arrayOf(
+            CREATE_WORK_ACCOUNT
+        )
+    }
+
+    object GameProfile {
+        const val ID = "gameprofile"
+        fun getContentUri(context: Context) = Uri.withAppendedPath(getCrossProfileSharedAuthorityUri(context), ID)
+        fun getContentType(context: Context) = "vnd.android.cursor.item/vnd.${getAuthority(context)}.$ID"
+
+        const val ALLOW_CREATE_PLAYER = "game_allow_create_player"
+        const val ALLOW_UPLOAD_GAME_PLAYED = "allow_upload_game_played"
+
+        val PROJECTION = arrayOf(
+            ALLOW_CREATE_PLAYER,
+            ALLOW_UPLOAD_GAME_PLAYED
         )
     }
 

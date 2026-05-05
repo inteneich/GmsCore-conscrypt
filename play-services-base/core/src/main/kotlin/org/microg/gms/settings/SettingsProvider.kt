@@ -16,12 +16,9 @@ import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import android.preference.PreferenceManager
 import org.microg.gms.common.PackageUtils.warnIfNotMainProcess
-import org.microg.gms.settings.SettingsContract.Auth
-import org.microg.gms.settings.SettingsContract.CheckIn
-import org.microg.gms.settings.SettingsContract.Gcm
-import org.microg.gms.settings.SettingsContract.Profile
 import org.microg.gms.settings.SettingsContract.getAuthority
 import java.io.File
+
 
 private const val SETTINGS_PREFIX = "org.microg.gms.settings."
 
@@ -65,11 +62,11 @@ class SettingsProvider : ContentProvider() {
         selection: String?,
         selectionArgs: Array<out String>?,
         sortOrder: String?
-    ): Cursor? = when (uri) {
-        CheckIn.getContentUri(context!!) -> queryCheckIn(projection ?: CheckIn.PROJECTION)
-        Gcm.getContentUri(context!!) -> queryGcm(projection ?: Gcm.PROJECTION)
-        Auth.getContentUri(context!!) -> queryAuth(projection ?: Auth.PROJECTION)
-        Profile.getContentUri(context!!) -> queryProfile(projection ?: Profile.PROJECTION)
+    ): Cursor? = when (uri.pathSegments.last()) {
+        CheckIn.ID -> queryCheckIn(projection ?: CheckIn.PROJECTION)
+        Gcm.ID -> queryGcm(projection ?: Gcm.PROJECTION)
+        Auth.ID -> queryAuth(projection ?: Auth.PROJECTION)
+        Profile.ID -> queryProfile(projection ?: Profile.PROJECTION)
         else -> null
     }
 
@@ -81,7 +78,7 @@ class SettingsProvider : ContentProvider() {
     ): Int {
         warnIfNotMainProcess(context, this.javaClass)
         if (values == null) return 0
-        when (uri) {
+        when (uri.pathSegments.last()) {
             CheckIn.getContentUri(context!!) -> updateCheckIn(values)
             Gcm.getContentUri(context!!) -> updateGcm(values)
             Auth.getContentUri(context!!) -> updateAuth(values)
@@ -188,6 +185,9 @@ class SettingsProvider : ContentProvider() {
             Auth.TRUST_GOOGLE -> getSettingsBoolean(key, true)
             Auth.VISIBLE -> getSettingsBoolean(key, false)
             Auth.INCLUDE_ANDROID_ID -> getSettingsBoolean(key, true)
+            Auth.STRIP_DEVICE_NAME -> getSettingsBoolean(key, false)
+            Auth.TWO_STEP_VERIFICATION -> getSettingsBoolean(key, false)
+            Auth.FIND_DEVICES -> getSettingsBoolean(key, false)
             else -> throw IllegalArgumentException("Unknown key: $key")
         }
     }
@@ -200,11 +200,15 @@ class SettingsProvider : ContentProvider() {
                 Auth.TRUST_GOOGLE -> editor.putBoolean(key, value as Boolean)
                 Auth.VISIBLE -> editor.putBoolean(key, value as Boolean)
                 Auth.INCLUDE_ANDROID_ID -> editor.putBoolean(key, value as Boolean)
+                Auth.STRIP_DEVICE_NAME -> editor.putBoolean(key, value as Boolean)
+                Auth.TWO_STEP_VERIFICATION -> editor.putBoolean(key, value as Boolean)
+                Auth.FIND_DEVICES -> editor.putBoolean(key, value as Boolean)
                 else -> throw IllegalArgumentException("Unknown key: $key")
             }
         }
         editor.apply()
     }
+
 
     private fun queryProfile(p: Array<out String>): Cursor = MatrixCursor(p).addRow(p) { key ->
         when (key) {
@@ -221,6 +225,81 @@ class SettingsProvider : ContentProvider() {
             when (key) {
                 Profile.PROFILE -> editor.putString(key, value as String?)
                 Profile.SERIAL -> editor.putString(key, value as String?)
+                else -> throw IllegalArgumentException("Unknown key: $key")
+            }
+        }
+        editor.apply()
+    }
+
+    private fun queryVending(p: Array<out String>): Cursor = MatrixCursor(p).addRow(p) { key ->
+        when (key) {
+            Vending.LICENSING -> getSettingsBoolean(key, false)
+            Vending.LICENSING_PURCHASE_FREE_APPS -> getSettingsBoolean(key, false)
+            Vending.BILLING -> getSettingsBoolean(key, false)
+            Vending.ASSET_DELIVERY -> getSettingsBoolean(key, false)
+            Vending.ASSET_DEVICE_SYNC -> getSettingsBoolean(key, false)
+            Vending.SPLIT_INSTALL -> getSettingsBoolean(key, false)
+            Vending.APPS_INSTALL -> getSettingsBoolean(key, false)
+            Vending.APPS_INSTALLER_LIST -> getSettingsString(key, "")
+            Vending.PLAY_INTEGRITY_APP_LIST -> getSettingsString(key, "")
+            else -> throw IllegalArgumentException("Unknown key: $key")
+        }
+    }
+
+    private fun updateVending(values: ContentValues) {
+        if (values.size() == 0) return
+        val editor = preferences.edit()
+        values.valueSet().forEach { (key, value) ->
+            when (key) {
+                Vending.LICENSING -> editor.putBoolean(key, value as Boolean)
+                Vending.LICENSING_PURCHASE_FREE_APPS -> editor.putBoolean(key, value as Boolean)
+                Vending.BILLING -> editor.putBoolean(key, value as Boolean)
+                Vending.SPLIT_INSTALL -> editor.putBoolean(key, value as Boolean)
+                Vending.ASSET_DELIVERY -> editor.putBoolean(key, value as Boolean)
+                Vending.ASSET_DEVICE_SYNC -> editor.putBoolean(key, value as Boolean)
+                Vending.APPS_INSTALL -> editor.putBoolean(key, value as Boolean)
+                Vending.APPS_INSTALLER_LIST -> editor.putString(key, value as String)
+                Vending.PLAY_INTEGRITY_APP_LIST -> editor.putString(key, value as String)
+                else -> throw IllegalArgumentException("Unknown key: $key")
+            }
+        }
+        editor.apply()
+    }
+
+    private fun queryWorkProfile(p: Array<out String>): Cursor = MatrixCursor(p).addRow(p) { key ->
+        when (key) {
+            WorkProfile.CREATE_WORK_ACCOUNT -> getSettingsBoolean(key, false)
+            else -> throw IllegalArgumentException("Unknown key: $key")
+        }
+    }
+
+    private fun updateWorkProfile(values: ContentValues) {
+        if (values.size() == 0) return
+        val editor = preferences.edit()
+        values.valueSet().forEach { (key, value) ->
+            when (key) {
+                WorkProfile.CREATE_WORK_ACCOUNT -> editor.putBoolean(key, value as Boolean)
+                else -> throw IllegalArgumentException("Unknown key: $key")
+            }
+        }
+        editor.apply()
+    }
+
+    private fun queryGameProfile(p: Array<out String>): Cursor = MatrixCursor(p).addRow(p) { key ->
+        when (key) {
+            GameProfile.ALLOW_CREATE_PLAYER -> getSettingsBoolean(key, false)
+            GameProfile.ALLOW_UPLOAD_GAME_PLAYED -> getSettingsBoolean(key, false)
+            else -> throw IllegalArgumentException("Unknown key: $key")
+        }
+    }
+
+    private fun updateGameProfile(values: ContentValues) {
+        if (values.size() == 0) return
+        val editor = preferences.edit()
+        values.valueSet().forEach { (key, value) ->
+            when (key) {
+                GameProfile.ALLOW_CREATE_PLAYER -> editor.putBoolean(key, value as Boolean)
+                GameProfile.ALLOW_UPLOAD_GAME_PLAYED -> editor.putBoolean(key, value as Boolean)
                 else -> throw IllegalArgumentException("Unknown key: $key")
             }
         }
