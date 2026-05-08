@@ -25,7 +25,7 @@ import android.content.res.Configuration;
 import android.opengl.GLES10;
 import android.util.DisplayMetrics;
 import org.microg.gms.profile.Build;
-import org.microg.gms.profile.ProfileManager;
+//import org.microg.gms.profile.ProfileManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +57,7 @@ public class DeviceConfiguration {
     public int widthPixels;
 
     public DeviceConfiguration(Context context) {
-        ProfileManager.ensureInitialized(context);
+ //       ProfileManager.ensureInitialized(context);
         ConfigurationInfo configurationInfo = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getDeviceConfigurationInfo();
         touchScreen = configurationInfo.reqTouchScreen;
         keyboardType = configurationInfo.reqKeyboardType;

@@ -59,7 +59,7 @@ public class SelfCheckFragment extends AbstractSelfCheckFragment {
 
     @Override
     protected void prepareSelfCheckList(List<SelfCheckGroup> checks) {
-//        checks.add(new RomSpoofSignatureChecks());
+ //       checks.add(new RomSpoofSignatureChecks());
         checks.add(new InstalledPackagesChecks());
 //        if (SDK_INT >= 23) {
 //            List<String> permissions = new ArrayList<>();

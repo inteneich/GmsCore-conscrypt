@@ -19,27 +19,7 @@
     <permission
         android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"
         android:label="@string/perm_gsf_read_gservices_label"
-        android:protectionLevel="normal" />
-    <permission
-        android:name="com.google.android.c2dm.permission.RECEIVE"
-        android:label="@string/perm_c2dm_receive_label"
-        android:permissionGroup="android.permission-group.NETWORK"
-        android:protectionLevel="normal" />
-    <permission
-        android:name="com.google.android.c2dm.permission.SEND"
-        android:label="@string/perm_c2dm_send_label"
-        android:permissionGroup="android.permission-group.NETWORK"
-        android:protectionLevel="privileged|signature" />
-    <permission
-        android:name="com.google.android.gtalkservice.permission.GTALK_SERVICE"
-        android:label="@string/perm_gtalk_svc_label"
-        android:permissionGroup="android.permission-group.MESSAGES"
-        android:protectionLevel="signature" />
-
-    <permission-tree
-        android:name="com.google.android.googleapps.permission.GOOGLE_AUTH"
-        android:icon="@drawable/proprietary_auth_ic_scope_icon_default" />
-        
+        android:protectionLevel="normal" />      
     <permission
         android:name="com.google.gms.STATUS_BROADCAST"
         android:label="@string/perm_status_broadcast_label"
@@ -90,7 +70,6 @@
         android:roundIcon="@mipmap/ic_app"
         android:label="@string/gms_app_name"
         android:multiArch="true"
-        android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.AppCompat.DayNight">
 
         <library android:name="com.google.android.gms" />
