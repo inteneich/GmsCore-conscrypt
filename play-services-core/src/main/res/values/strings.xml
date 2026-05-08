@@ -4,17 +4,17 @@
   ~ SPDX-License-Identifier: Apache-2.0
   -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="gms_app_name">microG Conscrypt</string>
-    <string name="gms_settings_name">microG Conscrypt Settings</string>
-    <string name="gms_settings_summary">Setup microG Conscrypt services.</string>
+    <string name="gms_app_name">microG Services</string>
+    <string name="gms_settings_name">microG Settings</string>
+    <string name="gms_settings_summary">Setup microG services.</string>
 
     <string name="perm_status_broadcast_label">listen to internal status broadcasts</string>
     <string name="perm_gsf_read_gservices_label">read Google service configuration</string>
     <string name="perm_extended_access_label">Extended access to Google services</string>
-    <string name="perm_provision_label">provision microG Conscrypt services</string>
+    <string name="perm_provision_label">provision microG services</string>
     <string name="perm_provision_description">Allows the app to configure microG services without user interaction</string>
 
-    <string name="lacking_permission_toast">microG Conscrypt Services: Lacking permission to <xliff:g example="have full network acccess">%1$s</xliff:g></string>
+    <string name="lacking_permission_toast">microG Services: Lacking permission to <xliff:g example="have full network acccess">%1$s</xliff:g></string>
 
     <!-- Self check -->
 
@@ -44,6 +44,6 @@
 
     <string name="prefcat_about">About</string>
   
-    <string name="pref_about_title">About microG Conscrypt Services</string>
+    <string name="pref_about_title">About microG Services</string>
     <string name="pref_about_summary">Version information and used libraries</string>
 </resources>
