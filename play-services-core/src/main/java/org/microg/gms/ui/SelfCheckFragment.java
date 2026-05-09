@@ -34,7 +34,7 @@ import org.microg.tools.selfcheck.InstalledPackagesChecks;
 //import org.microg.tools.selfcheck.NlpOsCompatChecks;
 //import org.microg.tools.selfcheck.NlpStatusChecks;
 //import org.microg.tools.selfcheck.PermissionCheckGroup;
-//import org.microg.tools.selfcheck.RomSpoofSignatureChecks;
+import org.microg.tools.selfcheck.RomSpoofSignatureChecks;
 import org.microg.tools.selfcheck.SelfCheckGroup;
 import org.microg.tools.selfcheck.SystemChecks;
 import org.microg.tools.ui.AbstractSelfCheckFragment;
@@ -59,7 +59,7 @@ public class SelfCheckFragment extends AbstractSelfCheckFragment {
 
     @Override
     protected void prepareSelfCheckList(List<SelfCheckGroup> checks) {
- //       checks.add(new RomSpoofSignatureChecks());
+       checks.add(new RomSpoofSignatureChecks());
         checks.add(new InstalledPackagesChecks());
 //        if (SDK_INT >= 23) {
 //            List<String> permissions = new ArrayList<>();

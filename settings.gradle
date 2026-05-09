@@ -16,16 +16,12 @@ def hasModule = (String name, boolean enabledByDefault) -> {
   return localProperties.getProperty("modules." + name, enabledByDefault.toString()).toBoolean()
 }
 
-include ':play-services-base'
+//include ':play-services-base'
 include ':play-services-basement'
-//include ':play-services-tasks'
-
-include ':play-services'
 
 // core only
 
 sublude ':play-services-basement:ktx'
-//sublude ':play-services-tasks:ktx'
 
 sublude ':play-services-base:core'
 include ':play-services-conscrypt-provider-core'

@@ -19,13 +19,6 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <org.microg.tools.ui.SwitchBar
-        android:id="@+id/switch_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/switchbar_background_color"
-        android:visibility="gone"/>
-
     <FrameLayout
         android:id="@+id/custom_bar"
         android:layout_width="match_parent"

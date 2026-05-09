@@ -12,7 +12,7 @@ configurations {
 
 dependencies {
     implementation "com.squareup.wire:wire-runtime:$wireVersion"
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
+//    implementation 'de.hdodenhof:circleimageview:3.1.0'
     includeProjects.each { projectName ->
         implementation project(projectName)
     }
@@ -20,15 +20,15 @@ dependencies {
     // AndroidX UI
     implementation "androidx.multidex:multidex:$multidexVersion"
     implementation "androidx.appcompat:appcompat:$appcompatVersion"
-    implementation "androidx.mediarouter:mediarouter:$mediarouterVersion"
+//    implementation "androidx.mediarouter:mediarouter:$mediarouterVersion"
     implementation "androidx.preference:preference-ktx:$preferenceVersion"
-    implementation "androidx.webkit:webkit:$webkitVersion"
+//    implementation "androidx.webkit:webkit:$webkitVersion"
 
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
 
-    implementation "com.android.volley:volley:$volleyVersion"
+//    implementation "com.android.volley:volley:$volleyVersion"
 
     implementation "androidx.lifecycle:lifecycle-service:$lifecycleVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"

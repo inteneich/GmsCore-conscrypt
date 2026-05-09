@@ -105,14 +105,6 @@
             </intent-filter>
         </activity-alias>
 
-        <activity
-            android:name="org.microg.gms.ui.SettingsDashboardActivity"
-            android:icon="@mipmap/ic_app_settings"
-            android:label="Legacy microG Settings"
-            android:process=":ui"
-            android:roundIcon="@mipmap/ic_app_settings"
-            android:taskAffinity="org.microg.gms.settings" />
-
         <!-- microG Settings embedded in System Settings on SDK 23 and newer -->
         <activity-alias
             android:name="org.microg.gms.ui.SettingsActivityLink"
@@ -154,15 +146,7 @@
 
         <service android:name="org.microg.gms.DummyService">
             <intent-filter>
-                <action android:name="com.google.android.contextmanager.service.ContextManagerService.START" />
-                <action android:name="com.google.android.gms.accounts.ACCOUNT_SERVICE" />
-                <action android:name="com.google.android.gms.auth.service.START" />
-                <action android:name="com.google.android.gms.cast.firstparty.START" />
-                <action android:name="com.google.android.gms.cast_mirroring.service.START" />
-                <action android:name="com.google.android.gms.cast.remote_display.service.START" />
-                <action android:name="com.google.android.gms.auth.api.credentials.service.START" />
                 <action android:name="com.google.android.gms.common.service.START" />
-                <action android:name="com.google.android.gms.identity.service.BIND" />
             </intent-filter>
         </service>
     </application>

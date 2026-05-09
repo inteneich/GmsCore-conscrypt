@@ -13,7 +13,7 @@ public abstract class AbstractSettingsActivity extends AppCompatActivity {
     protected int preferencesResource = 0;
     private ViewGroup customBarContainer;
     protected int customBarLayout = 0;
-    protected SwitchBar switchBar;
+//    protected SwitchBar switchBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +23,7 @@ public abstract class AbstractSettingsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        switchBar = (SwitchBar) findViewById(R.id.switch_bar);
+  //      switchBar = (SwitchBar) findViewById(R.id.switch_bar);
 
         customBarContainer = (ViewGroup) findViewById(R.id.custom_bar);
         if (customBarLayout != 0) {
@@ -43,9 +43,9 @@ public abstract class AbstractSettingsActivity extends AppCompatActivity {
         }
     }
 
-    public SwitchBar getSwitchBar() {
-        return switchBar;
-    }
+   // public SwitchBar getSwitchBar() {
+   //     return switchBar;
+   // }
 
     public void replaceFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
