@@ -44,7 +44,7 @@ buildscript {
             ':play-services-conscrypt-provider-core',
             ':play-services-core:microg-ui-tools',
 //            ':play-services-api',
-            ':play-services-tasks-ktx'
+//            ':play-services-tasks-ktx'
     ]
 
     try {

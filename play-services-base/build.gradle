@@ -54,7 +54,7 @@ dependencies {
     api "androidx.core:core:1.2.0"
     api "androidx.fragment:fragment:1.0.0"
     api project(':play-services-basement')
-    api project(':play-services-tasks')
+//    api project(':play-services-tasks')
 
 //    annotationProcessor project(':safe-parcel-processor')
 }

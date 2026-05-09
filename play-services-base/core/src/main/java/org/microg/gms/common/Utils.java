@@ -33,14 +33,6 @@ public class Utils {
         return Locale.getDefault(); // TODO
     }
 
-    public static DeviceIdentifier getDeviceIdentifier(Context context) {
-        return new DeviceIdentifier();
-    }
-
-    public static PhoneInfo getPhoneInfo(Context context) {
-        return new PhoneInfo();
-    }
-
     public static boolean hasSelfPermissionOrNotify(Context context, String permission) {
         if (context.checkCallingOrSelfPermission(permission) != PERMISSION_GRANTED) {
             Log.w("GmsUtils", "Lacking permission to " + permission + " for pid:" + android.os.Process.myPid() + " uid:" + android.os.Process.myUid());
