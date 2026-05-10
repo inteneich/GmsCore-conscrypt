@@ -19,9 +19,6 @@ android {
         "default" {
             dimension 'target'
         }
-        "huawei" {
-            dimension 'target'
-        }
     }
 
     buildFeatures {
