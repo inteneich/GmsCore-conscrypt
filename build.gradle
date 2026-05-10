@@ -43,8 +43,7 @@ buildscript {
             ':play-services-base-core',
             ':play-services-conscrypt-provider-core',
             ':play-services-core:microg-ui-tools',
-//            ':play-services-api',
-//            ':play-services-tasks-ktx'
+            ':fake-signature'
     ]
 
     try {
