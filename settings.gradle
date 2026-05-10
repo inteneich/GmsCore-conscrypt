@@ -21,7 +21,7 @@ include ':play-services-basement'
 
 // core only
 
-sublude ':play-services-basement:ktx'
+//sublude ':play-services-basement:ktx'
 
 sublude ':play-services-base:core'
 include ':play-services-conscrypt-provider-core'

@@ -9,7 +9,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 dependencies {
-    api project(':play-services-basement-ktx')
+    api project(':play-services-basement')
 
     implementation "androidx.annotation:annotation:$annotationVersion"
     implementation "androidx.appcompat:appcompat:$appcompatVersion"
@@ -17,8 +17,6 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
     implementation "androidx.preference:preference-ktx:$preferenceVersion"
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
 }
 
 android {

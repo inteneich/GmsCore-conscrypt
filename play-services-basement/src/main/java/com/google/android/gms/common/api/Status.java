@@ -27,7 +27,6 @@ import com.google.android.gms.common.internal.safeparcel.AbstractSafeParcelable;
 import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 import com.google.android.gms.common.internal.safeparcel.SafeParcelableCreatorAndWriter;
 import org.microg.gms.common.PublicApi;
-import org.microg.gms.utils.ToStringHelper;
 
 /**
  * Represents the results of work.
@@ -184,8 +183,10 @@ public final class Status extends AbstractSafeParcelable implements Result {
     @NonNull
     @Override
     public String toString() {
-        return ToStringHelper.name("Status").field("code", statusCode).field("message", statusMessage).field("resolution", resolution).end();
-    }
+    return "Status[code=" + statusCode + 
+           (statusMessage != null ? ", message=\"" + statusMessage + "\"" : "") +
+           (resolution != null ? ", resolution=" + resolution : "") + "]";
+    } 
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
